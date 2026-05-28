@@ -9,51 +9,61 @@ type Product = {
   description: string;
   category: string;
   image: string;
+  templateId: string;
+  color: string;
 };
 
 type ProductForm = {
   name: string;
-  price: string;
   description: string;
-  category: string;
   image: File | null;
 };
 
 const featuredProducts = [
   {
+    id: "taza",
     name: "Tazas personalizadas",
     price: "$8.500",
     description: "Tu foto, frase o ilustracion favorita en una taza lista para regalar.",
     gradient: "from-fuchsia-500 via-violet-500 to-cyan-400",
-    icon: "TA"
+    icon: "TA",
+    mockup: "taza"
   },
   {
+    id: "remera",
     name: "Remeras sublimadas",
     price: "$15.900",
     description: "Prendas con identidad propia para eventos, marcas y momentos especiales.",
     gradient: "from-cyan-400 via-sky-500 to-violet-500",
-    icon: "RE"
+    icon: "RE",
+    mockup: "remera"
   },
   {
-    name: "Pines personalizados",
-    price: "$2.900",
-    description: "Pequenos detalles con mucho caracter para mochilas, ferias y kits.",
+    id: "buzo",
+    name: "Buzos personalizados",
+    price: "$24.900",
+    description: "Abrigo con disenos propios para equipos, promos, marcas y regalos especiales.",
     gradient: "from-violet-600 via-fuchsia-500 to-pink-400",
-    icon: "PI"
+    icon: "BU",
+    mockup: "buzo"
   },
   {
-    name: "Llaveros",
-    price: "$3.500",
-    description: "Recuerdos practicos, brillantes y listos para acompanar todos los dias.",
+    id: "campera",
+    name: "Camperas sublimadas",
+    price: "$32.900",
+    description: "Prendas protagonistas para destacar tu identidad en eventos y emprendimientos.",
     gradient: "from-slate-900 via-violet-700 to-cyan-400",
-    icon: "LL"
+    icon: "CA",
+    mockup: "campera"
   },
   {
-    name: "Almohadones",
-    price: "$12.400",
-    description: "Textiles suaves con disenos que convierten cualquier rincon en historia.",
+    id: "uniforme",
+    name: "Uniformes personalizados",
+    price: "$28.500",
+    description: "Imagen profesional para comercios, equipos de trabajo y proyectos que crecen.",
     gradient: "from-fuchsia-500 via-rose-400 to-cyan-300",
-    icon: "AL"
+    icon: "UN",
+    mockup: "uniforme"
   }
 ];
 
@@ -65,11 +75,18 @@ const benefits = [
 
 const emptyForm: ProductForm = {
   name: "",
-  price: "",
   description: "",
-  category: "Regalos",
   image: null
 };
+
+const mockupColors = [
+  { name: "Blanco", value: "#ffffff" },
+  { name: "Negro suave", value: "#17131f" },
+  { name: "Violeta", value: "#6d28d9" },
+  { name: "Fucsia", value: "#d946ef" },
+  { name: "Cyan", value: "#22d3ee" },
+  { name: "Gris jaspeado", value: "#cbd5e1" }
+];
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Subliexpresate";
 
@@ -79,6 +96,8 @@ export default function Home() {
   const [preview, setPreview] = useState("");
   const [error, setError] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState(featuredProducts[1]);
+  const [mockupColor, setMockupColor] = useState(mockupColors[0].value);
 
   useEffect(() => {
     const updateScroll = () => {
@@ -97,7 +116,7 @@ export default function Home() {
   }, []);
 
   const handleFieldChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
@@ -119,7 +138,7 @@ export default function Home() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!form.name.trim() || !form.price.trim() || !form.description.trim() || !form.image) {
+    if (!form.name.trim() || !form.description.trim() || !form.image) {
       setError("Completa nombre, precio, descripcion e imagen para publicar tu producto.");
       return;
     }
@@ -127,10 +146,12 @@ export default function Home() {
     const newProduct: Product = {
       id: Date.now(),
       name: form.name.trim(),
-      price: form.price.trim(),
+      price: selectedProduct.price,
       description: form.description.trim(),
-      category: form.category,
-      image: URL.createObjectURL(form.image)
+      category: selectedProduct.name,
+      image: URL.createObjectURL(form.image),
+      templateId: selectedProduct.id,
+      color: mockupColor
     };
 
     setProducts((current) => [newProduct, ...current]);
@@ -138,6 +159,77 @@ export default function Home() {
     setPreview("");
     setError("");
     event.currentTarget.reset();
+  };
+
+  const handleTemplateSelect = (product: typeof featuredProducts[number]) => {
+    setSelectedProduct(product);
+    setError("");
+    document.getElementById("cargar")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const renderMockup = (image?: string, compact = false) => {
+    const isMug = selectedProduct.mockup === "taza";
+    const isJacket = selectedProduct.mockup === "campera";
+    const isHoodie = selectedProduct.mockup === "buzo";
+    const isUniform = selectedProduct.mockup === "uniforme";
+
+    if (isMug) {
+      return (
+        <div className={`${compact ? "h-56" : "h-72"} relative grid place-items-center overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.22),transparent_32rem),#f8fafc]`}>
+          <div className="absolute bottom-7 h-5 w-48 rounded-full bg-slate-900/10 blur-sm" />
+          <div
+            className="relative h-36 w-44 rounded-b-[2rem] rounded-t-lg border border-slate-200 shadow-soft"
+            style={{ backgroundColor: mockupColor }}
+          >
+            <div className="absolute -right-10 top-8 h-20 w-14 rounded-r-full border-[12px] border-l-0 border-slate-300" />
+            <div className="absolute left-1/2 top-8 h-20 w-24 -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white/80">
+              {image ? (
+                <img src={image} alt="Diseno cargado sobre taza" className="h-full w-full object-cover" />
+              ) : (
+                <span className="grid h-full place-items-center px-2 text-center text-xs font-black text-slate-400">Tu imagen</span>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`${compact ? "h-56" : "h-72"} relative grid place-items-center overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_28rem),#f8fafc]`}>
+        <div className="absolute bottom-7 h-5 w-56 rounded-full bg-slate-900/10 blur-sm" />
+        <div className="relative h-56 w-56">
+          {isHoodie ? (
+            <div className="absolute left-1/2 top-1 h-16 w-24 -translate-x-1/2 rounded-t-full border border-slate-200" style={{ backgroundColor: mockupColor }} />
+          ) : null}
+          <div
+            className="absolute left-1/2 top-10 h-40 w-32 -translate-x-1/2 rounded-t-2xl border border-slate-200 shadow-soft"
+            style={{
+              backgroundColor: mockupColor,
+              clipPath: isUniform
+                ? "polygon(16% 0, 84% 0, 100% 22%, 86% 100%, 14% 100%, 0 22%)"
+                : "polygon(20% 0, 80% 0, 100% 20%, 84% 100%, 16% 100%, 0 20%)"
+            }}
+          />
+          <div
+            className="absolute left-[18px] top-16 h-28 w-16 rotate-[-18deg] rounded-xl border border-slate-200"
+            style={{ backgroundColor: mockupColor }}
+          />
+          <div
+            className="absolute right-[18px] top-16 h-28 w-16 rotate-[18deg] rounded-xl border border-slate-200"
+            style={{ backgroundColor: mockupColor }}
+          />
+          {isJacket ? <div className="absolute left-1/2 top-12 h-36 w-px bg-white/70" /> : null}
+          {isUniform ? <div className="absolute left-1/2 top-14 h-7 w-16 -translate-x-1/2 rounded-b-full border-b-4 border-white/70" /> : null}
+          <div className="absolute left-1/2 top-24 h-20 w-20 -translate-x-1/2 overflow-hidden rounded-lg border border-white/70 bg-white/80 shadow-soft">
+            {image ? (
+              <img src={image} alt="Diseno cargado sobre prenda" className="h-full w-full object-cover" />
+            ) : (
+              <span className="grid h-full place-items-center px-2 text-center text-xs font-black text-slate-400">Tu imagen</span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const heroMotion = scrollProgress * 90;
@@ -282,7 +374,7 @@ export default function Home() {
             {featuredProducts.map((product, index) => (
               <article
                 key={product.name}
-                className="scroll-reveal product-card group rounded-lg border border-white/10 bg-white p-3 text-slate-950 shadow-soft transition duration-300 hover:-translate-y-3 hover:rotate-1 hover:shadow-glow"
+                className={`scroll-reveal product-card group rounded-lg border bg-white p-3 text-slate-950 shadow-soft transition duration-300 hover:-translate-y-3 hover:rotate-1 hover:shadow-glow ${selectedProduct.id === product.id ? "border-cyan-300 ring-4 ring-cyan-300/30" : "border-white/10"}`}
                 style={{
                   transitionDelay: `${index * 70}ms`,
                   transform: `translateY(${(index % 2 === 0 ? 1 : -1) * scrollProgress * 18}px)`
@@ -296,12 +388,13 @@ export default function Home() {
                   <h3 className="text-lg font-black">{product.name}</h3>
                   <p className="mt-1 text-xl font-black text-fuchsia-600">{product.price}</p>
                   <p className="mt-3 min-h-24 text-sm leading-6 text-slate-600">{product.description}</p>
-                  <a
-                    href="#cargar"
+                  <button
+                    type="button"
+                    onClick={() => handleTemplateSelect(product)}
                     className="mt-4 inline-flex w-full justify-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-black text-white transition group-hover:bg-fuchsia-600"
                   >
-                    Personalizar
-                  </a>
+                    {selectedProduct.id === product.id ? "Seleccionado" : "Personalizar"}
+                  </button>
                 </div>
               </article>
             ))}
@@ -321,7 +414,7 @@ export default function Home() {
               Carga tu producto
             </h2>
             <p className="mt-5 leading-8 text-slate-600">
-              Publica una idea nueva en segundos: nombre claro, precio atractivo, una descripcion vendedora y una foto que lo haga brillar.
+              Publica una idea nueva en segundos. El precio lo define el administrador desde la plantilla elegida y el cliente solo carga su diseno.
             </p>
             <div className="floating-card mt-7 rounded-lg bg-gradient-to-br from-violet-700 via-fuchsia-600 to-cyan-400 p-6 text-white shadow-glow">
               <p className="text-2xl font-black">Microcopy que vende</p>
@@ -347,10 +440,9 @@ export default function Home() {
                 <span className="text-sm font-bold text-slate-700">Precio</span>
                 <input
                   name="price"
-                  value={form.price}
-                  onChange={handleFieldChange}
-                  className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 outline-none transition focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-100"
-                  placeholder="$9.900"
+                  value={selectedProduct.price}
+                  readOnly
+                  className="mt-2 w-full rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3 font-black text-cyan-800 outline-none"
                 />
               </label>
               <label className="block sm:col-span-2">
@@ -365,19 +457,13 @@ export default function Home() {
                 />
               </label>
               <label className="block">
-                <span className="text-sm font-bold text-slate-700">Categoria</span>
-                <select
+                <span className="text-sm font-bold text-slate-700">Categoria seleccionada</span>
+                <input
                   name="category"
-                  value={form.category}
-                  onChange={handleFieldChange}
-                  className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-100"
-                >
-                  <option>Regalos</option>
-                  <option>Indumentaria</option>
-                  <option>Eventos</option>
-                  <option>Emprendimientos</option>
-                  <option>Souvenirs</option>
-                </select>
+                  value={selectedProduct.name}
+                  readOnly
+                  className="mt-2 w-full rounded-lg border border-violet-200 bg-violet-50 px-4 py-3 font-black text-violet-800 outline-none"
+                />
               </label>
               <label className="block">
                 <span className="text-sm font-bold text-slate-700">Imagen</span>
@@ -390,14 +476,27 @@ export default function Home() {
               </label>
             </div>
 
-            <div className="mt-5 overflow-hidden rounded-lg border border-slate-100 bg-slate-50">
-              {preview ? (
-                <img src={preview} alt="Vista previa del producto" className="h-64 w-full object-cover" />
-              ) : (
-                <div className="preview-pulse grid h-64 place-items-center bg-[linear-gradient(135deg,rgba(124,58,237,0.10),rgba(34,211,238,0.16))] px-6 text-center font-bold text-slate-500">
-                  La vista previa de tu imagen aparece aca
+            <div className="mt-5 rounded-lg border border-slate-100 bg-slate-50 p-3">
+              <div className="mb-3 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                <div>
+                  <p className="text-sm font-black text-slate-950">Mockup de {selectedProduct.name}</p>
+                  <p className="text-sm text-slate-500">Cambia el color base y mira como combina con tu imagen.</p>
                 </div>
-              )}
+                <div className="flex flex-wrap gap-2">
+                  {mockupColors.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => setMockupColor(color.value)}
+                      title={color.name}
+                      aria-label={`Usar color ${color.name}`}
+                      className={`h-9 w-9 rounded-full border-2 shadow-sm transition hover:scale-110 ${mockupColor === color.value ? "border-fuchsia-500 ring-4 ring-fuchsia-100" : "border-white"}`}
+                      style={{ backgroundColor: color.value }}
+                    />
+                  ))}
+                </div>
+              </div>
+              {renderMockup(preview)}
             </div>
 
             {error ? <p className="mt-4 rounded-lg bg-fuchsia-50 px-4 py-3 text-sm font-bold text-fuchsia-700">{error}</p> : null}
