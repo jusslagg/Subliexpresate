@@ -172,6 +172,7 @@ export default function Home() {
     const isJacket = selectedProduct.mockup === "campera";
     const isHoodie = selectedProduct.mockup === "buzo";
     const isUniform = selectedProduct.mockup === "uniforme";
+    const isTshirt = selectedProduct.mockup === "remera";
 
     if (isMug) {
       return (
@@ -194,35 +195,124 @@ export default function Home() {
       );
     }
 
+    const printTop = isHoodie ? "top-[128px]" : isJacket ? "top-[122px]" : "top-[118px]";
+    const printSize = isUniform ? "h-24 w-24" : "h-28 w-28";
+    const garmentLabel = isTshirt
+      ? "remera"
+      : isHoodie
+        ? "buzo"
+        : isJacket
+          ? "campera"
+          : "uniforme";
+
     return (
-      <div className={`${compact ? "h-56" : "h-72"} relative grid place-items-center overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_28rem),#f8fafc]`}>
-        <div className="absolute bottom-7 h-5 w-56 rounded-full bg-slate-900/10 blur-sm" />
-        <div className="relative h-56 w-56">
-          {isHoodie ? (
-            <div className="absolute left-1/2 top-1 h-16 w-24 -translate-x-1/2 rounded-t-full border border-slate-200" style={{ backgroundColor: mockupColor }} />
-          ) : null}
-          <div
-            className="absolute left-1/2 top-10 h-40 w-32 -translate-x-1/2 rounded-t-2xl border border-slate-200 shadow-soft"
-            style={{
-              backgroundColor: mockupColor,
-              clipPath: isUniform
-                ? "polygon(16% 0, 84% 0, 100% 22%, 86% 100%, 14% 100%, 0 22%)"
-                : "polygon(20% 0, 80% 0, 100% 20%, 84% 100%, 16% 100%, 0 20%)"
-            }}
-          />
-          <div
-            className="absolute left-[18px] top-16 h-28 w-16 rotate-[-18deg] rounded-xl border border-slate-200"
-            style={{ backgroundColor: mockupColor }}
-          />
-          <div
-            className="absolute right-[18px] top-16 h-28 w-16 rotate-[18deg] rounded-xl border border-slate-200"
-            style={{ backgroundColor: mockupColor }}
-          />
-          {isJacket ? <div className="absolute left-1/2 top-12 h-36 w-px bg-white/70" /> : null}
-          {isUniform ? <div className="absolute left-1/2 top-14 h-7 w-16 -translate-x-1/2 rounded-b-full border-b-4 border-white/70" /> : null}
-          <div className="absolute left-1/2 top-24 h-20 w-20 -translate-x-1/2 overflow-hidden rounded-lg border border-white/70 bg-white/80 shadow-soft">
+      <div className={`${compact ? "h-64" : "h-80"} relative grid place-items-center overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_28rem),#f8fafc]`}>
+        <div className="absolute bottom-8 h-7 w-72 rounded-full bg-slate-900/12 blur-xl" />
+        <div className="relative h-[310px] w-[360px] max-w-full">
+          <svg
+            viewBox="0 0 420 360"
+            className="absolute inset-0 h-full w-full drop-shadow-[0_24px_24px_rgba(15,23,42,0.16)]"
+            role="img"
+            aria-label={`Mockup realista de ${garmentLabel}`}
+          >
+            <defs>
+              <filter id={`fabric-shadow-${selectedProduct.id}`} x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="14" stdDeviation="10" floodColor="#0f172a" floodOpacity="0.18" />
+              </filter>
+              <linearGradient id={`fabric-light-${selectedProduct.id}`} x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.32" />
+                <stop offset="42%" stopColor="#ffffff" stopOpacity="0.06" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.18" />
+              </linearGradient>
+              <pattern id={`fabric-texture-${selectedProduct.id}`} width="8" height="8" patternUnits="userSpaceOnUse">
+                <path d="M0 3 H8 M3 0 V8" stroke="#ffffff" strokeOpacity="0.08" strokeWidth="0.7" />
+              </pattern>
+            </defs>
+
+            {isHoodie ? (
+              <path
+                d="M154 116 C158 70 183 45 211 45 C239 45 264 70 268 116 C253 104 236 98 211 98 C186 98 169 104 154 116Z"
+                fill={mockupColor}
+                stroke="rgba(15,23,42,0.14)"
+                strokeWidth="2"
+              />
+            ) : null}
+
+            {isJacket ? (
+              <>
+                <path
+                  d="M146 104 C164 91 183 86 210 86 C237 86 256 91 274 104 L318 130 C327 136 330 147 326 157 L289 261 C286 270 278 276 269 276 H151 C142 276 134 270 131 261 L94 157 C90 147 93 136 102 130Z"
+                  fill={mockupColor}
+                  filter={`url(#fabric-shadow-${selectedProduct.id})`}
+                />
+                <path d="M210 96 V276" stroke="rgba(255,255,255,0.58)" strokeWidth="3" />
+                <path d="M194 100 L210 134 L226 100" fill="rgba(255,255,255,0.24)" />
+              </>
+            ) : (
+              <path
+                d={
+                  isUniform
+                    ? "M145 102 C165 88 184 82 210 82 C236 82 255 88 275 102 L327 138 C337 145 339 159 332 169 L297 219 L280 206 L269 286 C268 296 260 303 250 303 H170 C160 303 152 296 151 286 L140 206 L123 219 L88 169 C81 159 83 145 93 138Z"
+                    : "M146 103 C166 90 185 84 210 84 C235 84 254 90 274 103 L330 136 C340 142 343 156 337 166 L304 219 C299 227 289 230 281 225 L269 216 L260 293 C259 303 251 310 241 310 H179 C169 310 161 303 160 293 L151 216 L139 225 C131 230 121 227 116 219 L83 166 C77 156 80 142 90 136Z"
+                }
+                fill={mockupColor}
+                filter={`url(#fabric-shadow-${selectedProduct.id})`}
+              />
+            )}
+
+            <path
+              d={
+                isHoodie
+                  ? "M146 116 C165 105 184 100 210 100 C236 100 255 105 274 116 L318 139 C328 144 333 156 329 167 L296 258 C292 269 283 276 271 276 H149 C137 276 128 269 124 258 L91 167 C87 156 92 144 102 139Z"
+                  : isJacket
+                    ? "M146 104 C164 91 183 86 210 86 C237 86 256 91 274 104 L318 130 C327 136 330 147 326 157 L289 261 C286 270 278 276 269 276 H151 C142 276 134 270 131 261 L94 157 C90 147 93 136 102 130Z"
+                    : isUniform
+                      ? "M145 102 C165 88 184 82 210 82 C236 82 255 88 275 102 L327 138 C337 145 339 159 332 169 L297 219 L280 206 L269 286 C268 296 260 303 250 303 H170 C160 303 152 296 151 286 L140 206 L123 219 L88 169 C81 159 83 145 93 138Z"
+                      : "M146 103 C166 90 185 84 210 84 C235 84 254 90 274 103 L330 136 C340 142 343 156 337 166 L304 219 C299 227 289 230 281 225 L269 216 L260 293 C259 303 251 310 241 310 H179 C169 310 161 303 160 293 L151 216 L139 225 C131 230 121 227 116 219 L83 166 C77 156 80 142 90 136Z"
+              }
+              fill={`url(#fabric-light-${selectedProduct.id})`}
+            />
+            <path
+              d={
+                isHoodie
+                  ? "M146 116 C165 105 184 100 210 100 C236 100 255 105 274 116 L318 139 C328 144 333 156 329 167 L296 258 C292 269 283 276 271 276 H149 C137 276 128 269 124 258 L91 167 C87 156 92 144 102 139Z"
+                  : "M146 103 C166 90 185 84 210 84 C235 84 254 90 274 103 L330 136 C340 142 343 156 337 166 L304 219 C299 227 289 230 281 225 L269 216 L260 293 C259 303 251 310 241 310 H179 C169 310 161 303 160 293 L151 216 L139 225 C131 230 121 227 116 219 L83 166 C77 156 80 142 90 136Z"
+              }
+              fill={`url(#fabric-texture-${selectedProduct.id})`}
+            />
+
+            <path
+              d="M179 94 C188 113 199 122 210 122 C221 122 232 113 241 94"
+              fill="none"
+              stroke="rgba(255,255,255,0.58)"
+              strokeWidth="9"
+              strokeLinecap="round"
+            />
+            <path
+              d="M184 93 C193 105 201 111 210 111 C219 111 227 105 236 93"
+              fill="none"
+              stroke="rgba(15,23,42,0.22)"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            {isHoodie ? (
+              <>
+                <path d="M184 118 C192 139 201 151 210 151 C219 151 228 139 236 118" fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="3" />
+                <path d="M199 122 C195 147 191 161 184 178" fill="none" stroke="rgba(255,255,255,0.48)" strokeWidth="2" strokeLinecap="round" />
+                <path d="M221 122 C225 147 229 161 236 178" fill="none" stroke="rgba(255,255,255,0.48)" strokeWidth="2" strokeLinecap="round" />
+              </>
+            ) : null}
+            {isUniform ? (
+              <>
+                <path d="M180 101 L210 136 L240 101" fill="rgba(255,255,255,0.28)" />
+                <path d="M177 101 L210 139 L243 101" fill="none" stroke="rgba(15,23,42,0.16)" strokeWidth="2" />
+              </>
+            ) : null}
+          </svg>
+
+          <div className={`absolute left-1/2 ${printTop} ${printSize} -translate-x-1/2 overflow-hidden rounded-md border border-white/70 bg-white/85 shadow-[0_10px_28px_rgba(15,23,42,0.18)] ring-1 ring-slate-900/10`}>
             {image ? (
-              <img src={image} alt="Diseno cargado sobre prenda" className="h-full w-full object-cover" />
+              <img src={image} alt={`Diseno cargado sobre ${garmentLabel}`} className="h-full w-full object-cover opacity-95 mix-blend-normal" />
             ) : (
               <span className="grid h-full place-items-center px-2 text-center text-xs font-black text-slate-400">Tu imagen</span>
             )}
