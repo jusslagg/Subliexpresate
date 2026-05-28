@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "pages:build": "next build",
+    "pages:docs": "next build && node scripts/copy-out-to-docs.mjs",
     "lint": "next lint"
   },
   "dependencies": {
