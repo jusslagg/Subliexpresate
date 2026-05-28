@@ -71,6 +71,8 @@ const emptyForm: ProductForm = {
   image: null
 };
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Subliexpresate";
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<ProductForm>(emptyForm);
@@ -213,7 +215,7 @@ export default function Home() {
           >
             <div className="absolute -inset-3 rounded-lg bg-white/25 blur-xl" />
             <img
-              src="/assets/subliexpresate-hero.png"
+              src={`${basePath}/assets/subliexpresate-hero.png`}
               alt="Productos personalizados de sublimacion"
               className="relative aspect-[4/3] w-full rounded-lg object-cover shadow-[0_35px_90px_rgba(15,23,42,0.35)]"
             />
