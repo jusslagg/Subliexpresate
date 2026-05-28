@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #17131f;
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.22), transparent 30rem),
+    radial-gradient(circle at 80% 10%, rgba(217, 70, 239, 0.18), transparent 28rem),
+    #fff;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.scroll-reveal {
+  animation: reveal-up both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 32%;
+}
+
+.floating-card {
+  animation: soft-float 5.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.shine-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-button::after {
+  content: "";
+  position: absolute;
+  inset: -60% auto -60% -45%;
+  width: 38%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: shine-sweep 3.4s ease-in-out infinite;
+}
+
+.scroll-cue::after {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 34px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: white;
+  animation: cue-drop 1.25s ease-in-out infinite;
+}
+
+.preview-pulse {
+  background-size: 180% 180%;
+  animation: preview-shift 4s ease-in-out infinite;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(46px) scale(0.97);
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes soft-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -12px;
+  }
+}
+
+@keyframes shine-sweep {
+  0%,
+  35% {
+    transform: translateX(0) rotate(18deg);
+  }
+
+  70%,
+  100% {
+    transform: translateX(390%) rotate(18deg);
+  }
+}
+
+@keyframes cue-drop {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes preview-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
