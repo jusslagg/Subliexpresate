@@ -14,10 +14,10 @@ export default function NotFound() {
             Error 404
           </p>
           <h1 className="mt-5 text-5xl font-black leading-tight tracking-normal sm:text-7xl">
-            Este diseno se perdio antes de sublimarse.
+            Este diseño se perdió antes de sublimarse.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-white/88">
-            La pagina que buscabas no esta en el catalogo, pero podemos volver al inicio y crear algo mucho mejor.
+            La página que buscabas no está en el catálogo, pero podemos volver al inicio y crear algo mucho mejor.
           </p>
           <a
             href={`${basePath}/`}

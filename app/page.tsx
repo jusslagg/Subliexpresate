@@ -1,6 +1,9 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Canvas, useLoader } from "@react-three/fiber";
+import { ContactShadows, Environment, OrbitControls, RoundedBox } from "@react-three/drei";
+import { SRGBColorSpace, TextureLoader } from "three";
 
 type Product = {
   id: number;
@@ -24,7 +27,7 @@ const featuredProducts = [
     id: "taza",
     name: "Tazas personalizadas",
     price: "$8.500",
-    description: "Tu foto, frase o ilustracion favorita en una taza lista para regalar.",
+    description: "Tu foto, frase o ilustración favorita en una taza lista para regalar.",
     gradient: "from-fuchsia-500 via-violet-500 to-cyan-400",
     icon: "TA",
     mockup: "taza"
@@ -42,7 +45,7 @@ const featuredProducts = [
     id: "buzo",
     name: "Buzos personalizados",
     price: "$24.900",
-    description: "Abrigo con disenos propios para equipos, promos, marcas y regalos especiales.",
+    description: "Abrigo con diseños propios para equipos, promos, marcas y regalos especiales.",
     gradient: "from-violet-600 via-fuchsia-500 to-pink-400",
     icon: "BU",
     mockup: "buzo"
@@ -68,8 +71,8 @@ const featuredProducts = [
 ];
 
 const benefits = [
-  "Personalizacion rapida",
-  "Productos unicos",
+  "Personalización rápida",
+  "Productos únicos",
   "Ideal para regalos y emprendimientos"
 ];
 
@@ -89,6 +92,158 @@ const mockupColors = [
 ];
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "/Subliexpresate";
+const logoPath = `${basePath}/assets/logo-subliexpresate.png`;
+
+function UploadedPrint({ image, productType }: { image: string; productType: string }) {
+  const texture = useLoader(TextureLoader, image);
+  const isMug = productType === "taza";
+
+  useEffect(() => {
+    texture.colorSpace = SRGBColorSpace;
+    texture.needsUpdate = true;
+  }, [texture]);
+
+  return (
+    <mesh position={isMug ? [0, 0, 0.585] : [0, 0.18, 0.245]}>
+      <planeGeometry args={isMug ? [0.55, 0.55] : [0.72, 0.72]} />
+      <meshBasicMaterial map={texture} transparent toneMapped={false} />
+    </mesh>
+  );
+}
+
+function GarmentModel({
+  color,
+  image,
+  productType
+}: {
+  color: string;
+  image: string;
+  productType: string;
+}) {
+  const isHoodie = productType === "buzo";
+  const isJacket = productType === "campera";
+  const isUniform = productType === "uniforme";
+  const fabricProps = {
+    color,
+    roughness: 0.78,
+    metalness: 0.02
+  };
+
+  if (productType === "taza") {
+    return (
+      <group rotation={[0, -0.25, 0]}>
+        <mesh castShadow receiveShadow>
+          <cylinderGeometry args={[0.58, 0.58, 1.18, 72]} />
+          <meshStandardMaterial color={color} roughness={0.42} metalness={0.02} />
+        </mesh>
+        <mesh position={[0, 0.64, 0]} castShadow>
+          <torusGeometry args={[0.52, 0.035, 16, 72]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.34} />
+        </mesh>
+        <mesh position={[0, -0.64, 0]} castShadow>
+          <torusGeometry args={[0.52, 0.035, 16, 72]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.4} />
+        </mesh>
+        <mesh position={[0.58, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <torusGeometry args={[0.36, 0.075, 18, 48, Math.PI * 1.35]} />
+          <meshStandardMaterial color={color} roughness={0.42} />
+        </mesh>
+        {image ? <UploadedPrint image={image} productType={productType} /> : null}
+      </group>
+    );
+  }
+
+  return (
+    <group rotation={[0, -0.28, 0]}>
+      {isHoodie ? (
+        <>
+          <mesh position={[0, 0.92, -0.06]} scale={[0.72, 0.52, 0.34]} castShadow receiveShadow>
+            <sphereGeometry args={[1, 36, 20, 0, Math.PI * 2, 0, Math.PI / 1.8]} />
+            <meshStandardMaterial {...fabricProps} />
+          </mesh>
+          <RoundedBox args={[0.92, 0.24, 0.18]} radius={0.08} position={[0, -0.48, 0.24]} castShadow>
+            <meshStandardMaterial color={color} roughness={0.82} />
+          </RoundedBox>
+        </>
+      ) : null}
+
+      <RoundedBox args={[1.32, 1.7, 0.36]} radius={0.12} smoothness={5} position={[0, -0.05, 0]} castShadow receiveShadow>
+        <meshStandardMaterial {...fabricProps} />
+      </RoundedBox>
+      <RoundedBox args={[0.48, 1.02, 0.34]} radius={0.11} smoothness={5} position={[-0.83, 0.22, 0]} rotation={[0, 0, -0.48]} castShadow receiveShadow>
+        <meshStandardMaterial {...fabricProps} />
+      </RoundedBox>
+      <RoundedBox args={[0.48, 1.02, 0.34]} radius={0.11} smoothness={5} position={[0.83, 0.22, 0]} rotation={[0, 0, 0.48]} castShadow receiveShadow>
+        <meshStandardMaterial {...fabricProps} />
+      </RoundedBox>
+
+      <mesh position={[0, 0.78, 0.22]} rotation={[0, 0, 0]} castShadow>
+        <torusGeometry args={[0.27, 0.035, 18, 64]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.65} />
+      </mesh>
+      <mesh position={[0, 0.78, 0.24]} scale={[0.78, 0.38, 0.08]}>
+        <sphereGeometry args={[0.34, 32, 12]} />
+        <meshStandardMaterial color="#0f172a" roughness={0.9} />
+      </mesh>
+
+      {isJacket ? (
+        <>
+          <mesh position={[0, -0.08, 0.245]}>
+            <boxGeometry args={[0.025, 1.48, 0.018]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.35} />
+          </mesh>
+          <mesh position={[-0.18, 0.34, 0.25]} rotation={[0, 0, -0.33]}>
+            <boxGeometry args={[0.025, 0.58, 0.018]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.35} />
+          </mesh>
+          <mesh position={[0.18, 0.34, 0.25]} rotation={[0, 0, 0.33]}>
+            <boxGeometry args={[0.025, 0.58, 0.018]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.35} />
+          </mesh>
+        </>
+      ) : null}
+
+      {isUniform ? (
+        <>
+          <mesh position={[-0.18, 0.66, 0.25]} rotation={[0, 0, -0.52]}>
+            <boxGeometry args={[0.38, 0.08, 0.025]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.5} />
+          </mesh>
+          <mesh position={[0.18, 0.66, 0.25]} rotation={[0, 0, 0.52]}>
+            <boxGeometry args={[0.38, 0.08, 0.025]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.5} />
+          </mesh>
+        </>
+      ) : null}
+
+      {image ? <UploadedPrint image={image} productType={productType} /> : null}
+    </group>
+  );
+}
+
+function ProductMockup3D({
+  color,
+  image,
+  productType
+}: {
+  color: string;
+  image: string;
+  productType: string;
+}) {
+  return (
+    <div className="h-80 overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_28rem),#f8fafc]">
+      <Canvas camera={{ position: [0, 0.25, 4.2], fov: 34 }} shadows>
+        <ambientLight intensity={0.9} />
+        <directionalLight position={[3, 4, 5]} intensity={2.2} castShadow />
+        <directionalLight position={[-4, 2, 2]} intensity={0.8} />
+        <GarmentModel color={color} image={image} productType={productType} />
+        <ContactShadows position={[0, -1.25, 0]} opacity={0.24} scale={4} blur={2.5} />
+        <Environment preset="studio" />
+        <OrbitControls enablePan={false} minDistance={2.8} maxDistance={6} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 1.8} />
+      </Canvas>
+    </div>
+  );
+}
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -139,7 +294,7 @@ export default function Home() {
     event.preventDefault();
 
     if (!form.name.trim() || !form.description.trim() || !form.image) {
-      setError("Completa nombre, precio, descripcion e imagen para publicar tu producto.");
+      setError("Completá nombre, precio, descripción e imagen para publicar tu producto.");
       return;
     }
 
@@ -185,7 +340,7 @@ export default function Home() {
             <div className="absolute -right-10 top-8 h-20 w-14 rounded-r-full border-[12px] border-l-0 border-slate-300" />
             <div className="absolute left-1/2 top-8 h-20 w-24 -translate-x-1/2 overflow-hidden rounded-lg border border-slate-200 bg-white/80">
               {image ? (
-                <img src={image} alt="Diseno cargado sobre taza" className="h-full w-full object-cover" />
+                <img src={image} alt="Diseño cargado sobre taza" className="h-full w-full object-cover" />
               ) : (
                 <span className="grid h-full place-items-center px-2 text-center text-xs font-black text-slate-400">Tu imagen</span>
               )}
@@ -312,7 +467,7 @@ export default function Home() {
 
           <div className={`absolute left-1/2 ${printTop} ${printSize} -translate-x-1/2 overflow-hidden rounded-md border border-white/70 bg-white/85 shadow-[0_10px_28px_rgba(15,23,42,0.18)] ring-1 ring-slate-900/10`}>
             {image ? (
-              <img src={image} alt={`Diseno cargado sobre ${garmentLabel}`} className="h-full w-full object-cover opacity-95 mix-blend-normal" />
+              <img src={image} alt={`Diseño cargado sobre ${garmentLabel}`} className="h-full w-full object-cover opacity-95 mix-blend-normal" />
             ) : (
               <span className="grid h-full place-items-center px-2 text-center text-xs font-black text-slate-400">Tu imagen</span>
             )}
@@ -334,20 +489,24 @@ export default function Home() {
 
       <header className="sticky top-0 z-40 border-b border-white/50 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a href="#" className="text-xl font-black tracking-normal text-violet-700">
-            Subliexpresate
+          <a href="#" className="block shrink-0" aria-label="Subliexpresate - inicio">
+            <img
+              src={logoPath}
+              alt="Subliexpresate"
+              className="h-12 w-auto object-contain sm:h-14"
+            />
           </a>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-700 md:flex">
             <a className="transition hover:text-fuchsia-600" href="#beneficios">Beneficios</a>
             <a className="transition hover:text-fuchsia-600" href="#productos">Productos</a>
-            <a className="transition hover:text-fuchsia-600" href="#cargar">Cargar producto</a>
+            <a className="transition hover:text-fuchsia-600" href="#cargar">Cargá producto</a>
             <a className="transition hover:text-fuchsia-600" href="#contacto">Contacto</a>
           </nav>
           <a
             href="#cargar"
             className="shine-button rounded-lg bg-slate-950 px-4 py-2 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-fuchsia-600"
           >
-            Crear diseno
+            Crear diseño
           </a>
         </div>
       </header>
@@ -367,20 +526,24 @@ export default function Home() {
         <div className="relative mx-auto grid min-h-[calc(100vh-76px)] max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="z-10 max-w-2xl text-white">
             <p className="scroll-reveal mb-4 inline-flex rounded-lg border border-white/25 bg-white/15 px-3 py-1 text-sm font-bold backdrop-blur">
-              Sublimacion express con alma de regalo
+              Sublimación express con alma de regalo
             </p>
-            <h1 className="scroll-reveal text-5xl font-black leading-tight tracking-normal sm:text-6xl lg:text-8xl">
-              Subliexpresate
+            <h1 className="scroll-reveal">
+              <img
+                src={logoPath}
+                alt="Subliexpresate"
+                className="w-full max-w-[780px] object-contain drop-shadow-[0_18px_34px_rgba(15,23,42,0.28)]"
+              />
             </h1>
             <p className="scroll-reveal mt-6 text-xl font-medium leading-8 text-white/92 sm:text-2xl">
-              Converti tus fotos, frases e ideas en productos personalizados unicos.
+              Convertí tus fotos, frases e ideas en productos personalizados únicos.
             </p>
             <div className="scroll-reveal mt-8 flex flex-col gap-3 sm:flex-row">
               <a
                 href="#cargar"
                 className="shine-button rounded-lg bg-white px-6 py-3 text-center font-black text-violet-700 shadow-glow transition hover:-translate-y-1 hover:bg-cyan-100"
               >
-                Crear mi diseno
+                Crear mi diseño
               </a>
               <a
                 href="#productos"
@@ -398,7 +561,7 @@ export default function Home() {
             <div className="absolute -inset-3 rounded-lg bg-white/25 blur-xl" />
             <img
               src={`${basePath}/assets/subliexpresate-hero.png`}
-              alt="Productos personalizados de sublimacion"
+              alt="Productos personalizados de sublimación"
               className="relative aspect-[4/3] w-full rounded-lg object-cover shadow-[0_35px_90px_rgba(15,23,42,0.35)]"
             />
             <div className="absolute -bottom-2 left-6 right-6 rounded-lg border border-white/25 bg-white/90 p-4 text-slate-950 shadow-soft backdrop-blur">
@@ -416,7 +579,7 @@ export default function Home() {
         <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-violet-50 to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal max-w-3xl">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-fuchsia-600">Por que elegirnos</p>
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-fuchsia-600">Por qué elegirnos</p>
             <h2 className="mt-3 text-3xl font-black tracking-normal text-slate-950 sm:text-5xl">
               Ideas simples que se transforman en productos con impacto.
             </h2>
@@ -433,7 +596,7 @@ export default function Home() {
                 </span>
                 <h3 className="mt-5 text-xl font-black text-slate-950">{benefit}</h3>
                 <p className="mt-3 leading-7 text-slate-600">
-                  Produccion pensada para vender mejor, regalar mejor y mostrar tu estilo sin vueltas.
+                  Producción pensada para vender mejor, regalar mejor y mostrar tu estilo sin vueltas.
                 </p>
               </article>
             ))}
@@ -453,11 +616,11 @@ export default function Home() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="scroll-reveal flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-300">Catalogo estrella</p>
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-300">Catálogo estrella</p>
               <h2 className="mt-3 text-3xl font-black tracking-normal sm:text-5xl">Productos destacados</h2>
             </div>
             <p className="max-w-xl leading-7 text-slate-300">
-              Elegi una base, subinos tu idea y convertimos el detalle en una pieza lista para enamorar.
+              Elegí una base, subinos tu idea y convertimos el detalle en una pieza lista para enamorar.
             </p>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
@@ -499,17 +662,17 @@ export default function Home() {
         />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="scroll-reveal lg:sticky lg:top-28 lg:self-start">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-violet-700">Tu catalogo crece aca</p>
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-violet-700">Tu catálogo crece acá</p>
             <h2 className="mt-3 text-3xl font-black tracking-normal text-slate-950 sm:text-5xl">
-              Carga tu producto
+              Cargá tu producto
             </h2>
             <p className="mt-5 leading-8 text-slate-600">
-              Publica una idea nueva en segundos. El precio lo define el administrador desde la plantilla elegida y el cliente solo carga su diseno.
+              Publicá una idea nueva en segundos. El precio lo define el administrador desde la plantilla elegida y el cliente solo carga su diseño.
             </p>
             <div className="floating-card mt-7 rounded-lg bg-gradient-to-br from-violet-700 via-fuchsia-600 to-cyan-400 p-6 text-white shadow-glow">
               <p className="text-2xl font-black">Microcopy que vende</p>
               <p className="mt-3 leading-7 text-white/90">
-                Los productos personalizados se compran con emocion. Mostra para quien es, cuando regalarlo y por que no se consigue igual en otro lado.
+                Los productos personalizados se compran con emoción. Mostrá para quién es, cuándo regalarlo y por qué no se consigue igual en otro lado.
               </p>
             </div>
           </div>
@@ -523,7 +686,7 @@ export default function Home() {
                   value={form.name}
                   onChange={handleFieldChange}
                   className="mt-2 w-full rounded-lg border border-slate-200 px-4 py-3 outline-none transition focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-100"
-                  placeholder="Taza Dia de la Madre"
+                  placeholder="Taza Día de la Madre"
                 />
               </label>
               <label className="block">
@@ -536,18 +699,18 @@ export default function Home() {
                 />
               </label>
               <label className="block sm:col-span-2">
-                <span className="text-sm font-bold text-slate-700">Descripcion</span>
+                <span className="text-sm font-bold text-slate-700">Descripción</span>
                 <textarea
                   name="description"
                   value={form.description}
                   onChange={handleFieldChange}
                   rows={4}
                   className="mt-2 w-full resize-none rounded-lg border border-slate-200 px-4 py-3 outline-none transition focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-100"
-                  placeholder="Contanos por que es especial, para quien funciona y que detalle lo hace unico."
+                  placeholder="Contanos por qué es especial, para quién funciona y qué detalle lo hace único."
                 />
               </label>
               <label className="block">
-                <span className="text-sm font-bold text-slate-700">Categoria seleccionada</span>
+                <span className="text-sm font-bold text-slate-700">Categoría seleccionada</span>
                 <input
                   name="category"
                   value={selectedProduct.name}
@@ -569,8 +732,8 @@ export default function Home() {
             <div className="mt-5 rounded-lg border border-slate-100 bg-slate-50 p-3">
               <div className="mb-3 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                 <div>
-                  <p className="text-sm font-black text-slate-950">Mockup de {selectedProduct.name}</p>
-                  <p className="text-sm text-slate-500">Cambia el color base y mira como combina con tu imagen.</p>
+                  <p className="text-sm font-black text-slate-950">Mockup 3D de {selectedProduct.name}</p>
+                  <p className="text-sm text-slate-500">Arrastra para girar, acerca con zoom y cambia el color base.</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {mockupColors.map((color) => (
@@ -586,7 +749,7 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              {renderMockup(preview)}
+              <ProductMockup3D color={mockupColor} image={preview} productType={selectedProduct.mockup} />
             </div>
 
             {error ? <p className="mt-4 rounded-lg bg-fuchsia-50 px-4 py-3 text-sm font-bold text-fuchsia-700">{error}</p> : null}
@@ -611,7 +774,7 @@ export default function Home() {
               </h2>
             </div>
             <p className="max-w-lg leading-7 text-slate-600">
-              Cada publicacion suma una nueva opcion personalizada al escaparate.
+              Cada publicación suma una nueva opción personalizada al escaparate.
             </p>
           </div>
 
@@ -633,8 +796,8 @@ export default function Home() {
             </div>
           ) : (
             <div className="scroll-reveal mt-10 rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center shadow-soft">
-              <p className="text-xl font-black text-slate-950">Todavia no hay productos publicados.</p>
-              <p className="mt-2 text-slate-600">Carga el primero y dale vida al catalogo.</p>
+              <p className="text-xl font-black text-slate-950">Todavía no hay productos publicados.</p>
+              <p className="mt-2 text-slate-600">Cargá el primero y dale vida al catálogo.</p>
             </div>
           )}
         </div>
@@ -649,10 +812,10 @@ export default function Home() {
           <div className="scroll-reveal rounded-lg bg-white/92 px-5 py-10 shadow-glow backdrop-blur sm:px-10">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-600">Regalos con historia</p>
             <h2 className="mt-3 text-4xl font-black tracking-normal text-slate-950 sm:text-6xl">
-              Regala algo que no existe en ningun local
+              Regalá algo que no existe en ningún local
             </h2>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-              Para cumpleanos, aniversarios, egresos, fechas especiales o kits de emprendimiento: cada producto puede llevar una foto, una frase, una identidad visual o ese detalle que hace que alguien diga "esto lo hicieron pensando en mi".
+              Para cumpleaños, aniversarios, egresos, fechas especiales o kits de emprendimiento: cada producto puede llevar una foto, una frase, una identidad visual o ese detalle que hace que alguien diga "esto lo hicieron pensando en mí".
             </p>
             <a
               href="#cargar"
@@ -667,8 +830,14 @@ export default function Home() {
       <footer id="contacto" className="bg-slate-950 px-4 py-10 text-white sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-2xl font-black text-cyan-300">Subliexpresate</p>
-            <p className="mt-2 text-slate-300">Sublimacion, regalos personalizados y productos para emprendedores.</p>
+            <div className="inline-flex rounded-lg bg-white/95 px-3 py-2">
+              <img
+                src={logoPath}
+                alt="Subliexpresate"
+                className="h-16 w-auto object-contain"
+              />
+            </div>
+            <p className="mt-2 text-slate-300">Sublimación, regalos personalizados y productos para emprendedores.</p>
           </div>
           <div className="flex flex-wrap gap-3 text-sm font-bold text-slate-200">
             <a className="rounded-lg border border-white/15 px-4 py-2 transition hover:border-fuchsia-400 hover:text-fuchsia-300" href="#">Instagram</a>

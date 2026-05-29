@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Subliexpresate",
-  description: "Productos personalizados por sublimacion para regalos, fechas especiales y emprendimientos."
+  description: "Productos personalizados por sublimación para regalos, fechas especiales y emprendimientos."
 };
 
 export default function RootLayout({
