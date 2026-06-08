@@ -3,8 +3,8 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (process.env.VERCEL === "1
 const contactLinks = [
   {
     label: "WhatsApp",
-    value: "11 5896-5675",
-    href: "https://wa.me/1158965675",
+    value: "+54 9 11 5896-5675",
+    href: "https://wa.me/5491158965675",
     icon: "whatsapp"
   },
   {
