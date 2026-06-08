@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="blue" x1="60" x2="360" y1="120" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ea5e9"/>
+      <stop offset=".45" stop-color="#061a46"/>
+      <stop offset="1" stop-color="#0068d7"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="285" x2="476" y1="150" y2="365" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffb703"/>
+      <stop offset=".5" stop-color="#ff5a00"/>
+      <stop offset="1" stop-color="#d00065"/>
+    </linearGradient>
+    <linearGradient id="splash" x1="58" x2="460" y1="162" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ea5e9"/>
+      <stop offset=".35" stop-color="#0369c9"/>
+      <stop offset=".68" stop-color="#ff8a00"/>
+      <stop offset="1" stop-color="#c10072"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#061a46" flood-opacity=".18"/>
+    </filter>
+  </defs>
+
+  <path d="M85 192C142 93 282 60 412 92" fill="none" stroke="#08b7d4" stroke-width="18" stroke-linecap="round"/>
+  <path d="M95 218C154 132 286 103 394 128" fill="none" stroke="#139ed0" stroke-width="7" stroke-linecap="round"/>
+  <path d="M93 350C166 430 315 433 440 372" fill="none" stroke="url(#splash)" stroke-width="17" stroke-linecap="round"/>
+  <path d="M121 326C196 383 328 382 410 342" fill="none" stroke="#0064c9" stroke-width="8" stroke-linecap="round"/>
+
+  <ellipse cx="62" cy="287" rx="48" ry="18" fill="#ff9f00" transform="rotate(7 62 287)"/>
+  <ellipse cx="82" cy="332" rx="52" ry="20" fill="#d00075" transform="rotate(-24 82 332)"/>
+  <ellipse cx="79" cy="236" rx="20" ry="52" fill="#0b8fe8" transform="rotate(-36 79 236)"/>
+  <circle cx="78" cy="151" r="15" fill="#008ee4"/>
+  <circle cx="117" cy="121" r="9" fill="#0096c7"/>
+  <circle cx="397" cy="85" r="7" fill="#ff9f00"/>
+  <circle cx="423" cy="93" r="10" fill="#ff8a00"/>
+
+  <text
+    x="132"
+    y="322"
+    fill="url(#blue)"
+    filter="url(#soft-shadow)"
+    font-family="Arial Black, Impact, sans-serif"
+    font-size="235"
+    font-style="italic"
+    font-weight="900"
+    letter-spacing="-24"
+  >S</text>
+
+  <text
+    x="292"
+    y="319"
+    fill="url(#orange)"
+    filter="url(#soft-shadow)"
+    font-family="Brush Script MT, Segoe Script, cursive"
+    font-size="248"
+    font-style="italic"
+    font-weight="700"
+  >E</text>
+
+  <path d="M300 182C353 159 406 148 469 146" fill="none" stroke="#ff9f00" stroke-width="15" stroke-linecap="round"/>
+  <path d="M308 352C373 344 426 352 477 381" fill="none" stroke="#c10072" stroke-width="14" stroke-linecap="round"/>
+  <path d="M292 378C352 375 405 381 464 410" fill="none" stroke="#e00076" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="445" cy="240" r="8" fill="#ff5a00"/>
+  <circle cx="471" cy="232" r="6" fill="#d00065"/>
+</svg>

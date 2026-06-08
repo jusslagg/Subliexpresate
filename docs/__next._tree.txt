@@ -1,4 +1,4 @@
 :HL["/Subliexpresate/_next/static/chunks/12l1869321-s8.css","style"]
 :HL["/Subliexpresate/assets/subliexpresate-hero.png","image"]
 :HL["/Subliexpresate/assets/logo-subliexpresate-transparent.png","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"_v6DL6Z-QN7qTHhofYNh_"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"vEwdTWvFn8lQ0C6gYYos6"}
